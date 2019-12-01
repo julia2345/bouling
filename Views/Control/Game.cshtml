@@ -1,19 +1,192 @@
-﻿@model RoleHSETemp1.Models.RoleGame
+﻿@{
+    ViewBag.Title = "Бронирование";
 
-@{
-    ViewBag.Title = "Меню игр";
 }
+<h3>@ViewBag.Message</h3>
 
-<h2>Игры</h2>
+<div class="well" id="addUserPanel" style="display:inherit; width:1000px">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">ФИО</span>
+                </div>
+                <input id="FIOInput" type="text" class="form-control" placeholder="ФИО" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Номер телефона</span>
+                </div>
+                <input id="PhoneInput" type="text" class="form-control" placeholder="Номер" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Mail</span>
+                </div>
+                <input id="MailInput" type="text" class="form-control" placeholder="Почта" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Кол-во людей</span>
+                </div>
+                <input id="CountInput" type="text" class="form-control" placeholder="Кол-во" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Дата</span>
+                </div>
+                <input id="DateInput" type="text" class="form-control" placeholder="Кол-во" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        @*<li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Время</span>
+                </div>
+                <input id="TimeInput" type="text" class="form-control" placeholder="Кол-во" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>*@
+    </ul>
+   
+   
+
+    @*<ul class="list-group">
+        <li class="list-group-item" style="height:225px">
+            <div class="input-group">
+                <input id="nickInputForDelete" list="nickForDeleteList" type="text" class="form-control" aria-label="Text input with dropdown button">
+                <datalist id="nickForDeleteList"></datalist>
+
+            </div>
+            <br />
+            <button type="button" id="deleteUserFromDBButton" class="btn btn-primary">Удалить пользователя</button>
+        </li>
+    </ul>*@
 
 
 
-
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        var gUrl = window.location.host;
+        var nickNames;
+        loadData();
+
+        function refresh() {
+          
+            $('#FIOInput').val('');//блок переменных при добавлении пользователя
+            $('#PhoneInput').val('');
+            $('#MailInput').val('');
+            $('#CountInput').val('');
+            $('#DateInput').val('');
+            //$('#TimeInput').val('');
+        }
+
+        
+
+        //function loadData() {
+        //    $("#tbl_managers tr").remove();
+        //    $.ajax({
+        //        url: encodeURI('/Home/GetTableManagers/'),
+        //        type: "GET",
+        //        data: {},
+        //        contentType: "application/json;charset=utf-8",
+        //        dataType: "json",
+        //        success: function (result) {
+        //            var html = '<tr>';
+        //            html += '<th>~Nick</th>';
+        //            html += '<th>Position</th>';
+        //            html += '<th>Notes</th>';
+        //            html += '<th>VK</th>';
+        //            html += '<th>EMail</th>';
+        //            html += '<th>Access level</th>';
+        //            html += '<th>isActive</th>';
+        //            html += ' </tr>';
+        //            $.each(result, function (key, item) {
+        //                nickNames += '<option value="' + item.nickName + '"/>';
+        //                html += '<tr>';
+        //                html += '<td>' + item.nickName + '</td>';
+        //                html += '<td>' + item.position + '</td>';
+        //                html += '<td>' + item.notes + '</td>';
+        //                html += '<td>' + item.vk + '</td>';
+        //                html += '<td>' + item.email + '</td>';
+        //                html += '<td>' + item.accessLevel + '</td>';
+        //                html += '<td>' + item.isActive + '</td>';
+        //                html += '</tr>';
+        //            });
+        //            $('.tbody').append(html);
+        //            document.getElementById('nickForDeleteList').innerHTML = nickNames;
+        //        },
+        //        error: function (errormessage) {
+        //            alert(errormessage.responseText + "D");
+        //        }
+        //    });
+        //}
+
+        $('#addUserToDBButton').click(function (event) { //добавление юзера в бд
+            var FIO = $('#FIOInput').val();
+            var Phone = $('#PhoneInput').val();
+            var Mail = $('#MailInput').val();
+            var Count = $('#CountInput').val();
+            var Date = $('#DateInput').val();
+            //var Time = $('#TimeInput').val();
+           
+
+            $.ajax({
+                url: encodeURI('/Home/addUser/'),
+                type: "GET",
+                data: { nick: nick, position: position, email: email, vk: vk, notes: notes, accessLevel: accessLevel, isActive: isActive },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result == 'Один из параметров(ник/почта/вк) уже присвоен и не является уникальным. Измените входные данные.') {
+                        alert(result);
+                    }
+                    else {
+                        refresh();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText + "D");
+                }
+            });
+        });
+
+
+        $('#deleteUserFromDBButton').click(function (event) { //удаление юзера из бд
+            var nick = $('#nickInputForDelete').val();
+
+            $.ajax({
+                url: encodeURI('/Home/deleteUser/'),
+                type: "GET",
+                data: { nick: nick },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result == 'Такого пользователя с ником не существует') {
+                        alert(result);
+                    }
+                    else {
+                        refresh();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText + "D");
+                }
+            });
+        });
+
+
+
+    </script>
 }

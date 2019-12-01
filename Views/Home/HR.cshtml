@@ -1,0 +1,257 @@
+﻿@{
+    ViewBag.Title = "Редактор";
+
+}
+<h3>@ViewBag.Message</h3>
+<br />
+<button type="button" id="addUserButton" style="margin-left:20px" class="btn btn-primary">Редактировать пользователя</button>
+<br />
+<br />
+
+<div class="well" id="addUserPanel" style="display:none; width:1000px">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">~Nick</span>
+                </div>
+                <input id="nickInput" type="text" class="form-control" placeholder="Must be unique" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Position</span>
+                </div>
+                <input id="positionInput" type="text" class="form-control" placeholder="Должность в клубе" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">VK</span>
+                </div>
+                <input id="vkInput" type="text" class="form-control" placeholder="Only VK ID" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+
+    </ul>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">EMail</span>
+                </div>
+                <input id="emailInput" type="text" class="form-control" placeholder="EMail" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Access level</span>
+            </div>
+            <div class="input-group">
+                <input id="accessInput" list="suggestions" type="text" class="form-control" aria-label="Text input with dropdown button">
+                <datalist id="suggestions">
+                    <option>User</option>
+                    <option>Moderator</option>
+                    <option>Administrator</option>
+                </datalist>
+
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">IsActive?</span>
+            </div>
+            <div class="input-group">
+                <input id="isActiveInput" list="listtruefalse" type="text" class="form-control" aria-label="Text input with dropdown button">
+                <datalist id="listtruefalse">
+                    <option>True</option>
+                    <option>False</option>
+                </datalist>
+
+            </div>
+        </li>
+
+    </ul>
+
+    <ul class="list-group">
+        <li class="list-group-item" style="height:225px">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Notes</span>
+                </div>
+                <textarea id="notesInput" style="height:180px;max-height:180px; min-height:180px;" class="form-control" aria-label="With textarea"></textarea>
+            </div>
+        </li>
+    </ul>
+    <ul class="list-group">
+        <li class="list-group-item" style="height:225px">
+            <button type="button" id="addUserToDBButton" class="btn btn-primary">Добавить</button>
+
+        </li>
+    </ul>
+
+
+    <ul class="list-group">
+        <li class="list-group-item" style="height:225px">
+            <div class="input-group">
+                <input id="nickInputForDelete" list="nickForDeleteList" type="text" class="form-control" aria-label="Text input with dropdown button">
+                <datalist id="nickForDeleteList">
+                    
+                </datalist>
+
+            </div>
+            <br />
+            <button type="button" id="deleteUserFromDBButton" class="btn btn-primary">Удалить пользователя</button>
+        </li>
+    </ul>
+
+
+
+</div>
+
+
+<table id="tbl_managers" class="table table-hover" style="margin-left:20px; margin-top:50px">
+
+    <tbody class="tbody"></tbody>
+</table>
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        var gUrl = window.location.host;
+        var nickNames;
+        loadData();
+
+        function refresh() {
+            $('tbl_managers').remove();
+            invisiblePanel();
+            loadData();
+
+
+            $('#nickInput').val('');//блок переменных при добавлении пользователя
+            $('#positionInput').val('');
+            $('#emailInput').val('');
+            $('#vkInput').val('');
+            $('#notesInput').val('');
+            $('#accessInput').val('');
+            $('#isActiveInput').val('');
+
+
+        }
+
+        function invisiblePanel() { //делаем все невидимым
+            var elem = document.getElementById('addUserPanel');
+            elem.style.display = "none";
+        }
+
+        function loadData() {
+            $("#tbl_managers tr").remove();
+            $.ajax({
+                url: encodeURI('/Home/GetTableManagers/'),
+                type: "GET",
+                data: {},
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var html = '<tr>';
+                    html += '<th>~Nick</th>';
+                    html += '<th>Position</th>';
+                    html += '<th>Notes</th>';
+                    html += '<th>VK</th>';
+                    html += '<th>EMail</th>';
+                    html += '<th>Access level</th>';
+                    html += '<th>isActive</th>';
+                    html += ' </tr>';
+                    $.each(result, function (key, item) {
+                        nickNames += '<option value="' + item.nickName + '"/>';
+                        html += '<tr>';
+                        html += '<td>' + item.nickName + '</td>';
+                        html += '<td>' + item.position + '</td>';
+                        html += '<td>' + item.notes + '</td>';
+                        html += '<td>' + item.vk + '</td>';
+                        html += '<td>' + item.email + '</td>';
+                        html += '<td>' + item.accessLevel + '</td>';
+                        html += '<td>' + item.isActive + '</td>';
+                        html += '</tr>';
+                    });
+                    $('.tbody').append(html);
+                    document.getElementById('nickForDeleteList').innerHTML = nickNames;
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText + "D");
+                }
+            });
+        }
+
+
+        $('#addUserButton').click(function (event) { //панель добавления юзера видимость
+            var elem = document.getElementById('addUserPanel');
+            if (elem.style.display == "none") elem.style.display = "flex";
+            else elem.style.display = "none";
+            
+        });
+
+      
+
+
+        $('#addUserToDBButton').click(function (event) { //добавление юзера в бд
+            var nick = $('#nickInput').val();
+            var position = $('#positionInput').val();
+            var email = $('#emailInput').val();
+            var vk = $('#vkInput').val();
+            var notes = $('#notesInput').val();
+            var accessLevel = $('#accessInput').val();
+            var isActive = $('#isActiveInput').val();
+
+            $.ajax({
+                url: encodeURI('/Home/addUser/'),
+                type: "GET",
+                data: { nick: nick, position: position, email: email, vk: vk, notes: notes, accessLevel: accessLevel, isActive: isActive },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result == 'Один из параметров(ник/почта/вк) уже присвоен и не является уникальным. Измените входные данные.') {
+                        alert(result);
+                    }
+                    else {
+                        refresh();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText + "D");
+                }
+            });
+        });
+
+        
+        $('#deleteUserFromDBButton').click(function (event) { //удаление юзера из бд
+            var nick = $('#nickInputForDelete').val();
+
+            $.ajax({
+                url: encodeURI('/Home/deleteUser/'),
+                type: "GET",
+                data: { nick: nick },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result == 'Такого пользователя с ником не существует') {
+                        alert(result);
+                    }
+                    else {
+                        refresh();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText + "D");
+                }
+            });
+        });
+
+
+
+    </script>
+}

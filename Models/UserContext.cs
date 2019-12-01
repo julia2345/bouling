@@ -7,8 +7,9 @@ using System.Data.Entity;
 
 namespace RoleHSETemp1.Models
 {
-    public class RoleGameContext :DbContext
+    public class UserContext : DbContext
     {
-        public DbSet<BoulingGame> games { get; set; }
+        public DbSet<User> users { get; set; }
+
     }
 }
